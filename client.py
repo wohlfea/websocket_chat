@@ -14,6 +14,11 @@ class MyClientProtocol(WebSocketClientProtocol):
         print('Sending first message...')
         self.sendMessage(b'Hello World!')
 
+        def looped_message():
+            self.sendMessage(u"This is the looped message".encode('utf8'))
+            self.factory.loop.call_later(1, looped_message)
+        looped_message()
+
     def onClose(self, wasClean, code, reason):
         print('Websocket connection closed: {}'.format(reason))
 
@@ -31,5 +36,10 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     coro = loop.create_connection(factory, '127.0.0.1', 9000)
     loop.run_until_complete(coro)
-    loop.run_forever()
-    loop.close()
+
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.close()
