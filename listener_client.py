@@ -11,19 +11,11 @@ class MyClientProtocol(WebSocketClientProtocol):
 
     def onOpen(self):
         print('Websocket connection is now open.')
-        print('Sending first message...')
-        self.sendMessage(b'Hello World!')
-
-        def looped_message():
-            self.sendMessage('This is the looped message'.encode('utf8'))
-            print('Sending looped message')
-            self.factory.loop.call_later(1, looped_message)
-        looped_message()
 
     def onClose(self, wasClean, code, reason):
         print('Websocket connection closed: {}'.format(reason))
         self.factory.loop.stop()
-        
+
     def onMessage(self, payload, isBinary):
         if isBinary:
             print("Binary message received: {0} bytes".format(len(payload)))
